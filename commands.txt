@@ -1,0 +1,2 @@
+arduino-cli compile .\tests\buildtest\ -b arduino:avr:nano --build-path ./_build/ --library ./
+
