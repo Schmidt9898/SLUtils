@@ -1,5 +1,20 @@
 
+#define __USE_SERIAL__
+
 #include "SLUtils.h"
+#include "assert.h"
+SLed led_green(A1);
+SLed led_red(A0);
+
+
+void abort()
+{
+    led_red.turn(true);
+    while (1)
+    {
+        delay(100);
+    }
+};
 
 SLed myled1(8);
 
@@ -7,50 +22,46 @@ Button mybutton1(9);
 
 struct StorageTester
 {
-    int a = 1;
-    float b = 2.0f;
-    bool c = false;
+    int int_value = int(randomCompileSeedID);
+    float float_value = float(randomCompileSeedID);
+    bool bool_value = randomCompileSeedID % 2 == 0;
 };
 
 STORED_DATA(StorageTester, st);
 
+
+
 void setup()
 {
 
-    Serial.begin(9600);
+    InitSerial();
 
-    Serial.println("Slu startup!");
-    Serial.println(randomCompileSeedID);
+    println("Slu startup!");
+    //delay(2000);
+    println("Start test");
 
-    Serial.print("Addres of md");
-    Serial.println(int(&_flash_slu_management_data));
 
-    if (SluIsFirstRun())
-    {
-        // First run, initialize the data in eeprom
-        Serial.println("First run!");
+    assert_eq(SluIsFirstRun() == true); // Check if this is the first run
+    assert_eq(SluIsFirstRun() == false); // should return false after first call
 
-        Serial.println(st.data.a);
-        Serial.println(st.data.b);
-        Serial.println(st.data.c);
-        st.data.a = 50;
-        st.data.b = 50.0f;
-        st.data.c = true;
-        // st.save();
-        SluSaveAllData();
-    }
-    else
-    {
-        Serial.println("Not first run!");
+    assert_eq(st.data.int_value != int(randomCompileSeedID));
+    assert_eq(st.data.float_value != float(randomCompileSeedID));
+    // assert_eq(st.data.bool_value != (randomCompileSeedID % 2 == 0)); coinflip
 
-        Serial.println(st.data.a);
-        Serial.println(st.data.b);
-        Serial.println(st.data.c);
-        st.data.a = 10;
-        st.data.b = 20.0f;
-        st.data.c = true;
-        st.save();
-    }
+    st.data.int_value = int(randomCompileSeedID);
+    st.data.float_value = float(randomCompileSeedID);
+    st.data.bool_value = (randomCompileSeedID % 2 == 0);
+
+    SluSaveAllData();
+    st.load(); // Load the data from EEPROM
+
+    assert_eq(st.data.int_value == int(randomCompileSeedID));
+    assert_eq(st.data.float_value == float(randomCompileSeedID));
+    assert_eq(st.data.bool_value == (randomCompileSeedID % 2 == 0));
+
+
+    led_green.turn(true);
+    println("All tests passed!");
 }
 
 void loop()

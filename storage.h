@@ -69,14 +69,14 @@ public:
 	void save()
 	{
 		EEPROM.put(flash_data_ptr, data);
-		Serial.print("Saving data to EEPROM at address: ");
-		Serial.println(flash_data_ptr, DEC);
+		print("Saving data to EEPROM at address: ");
+		println(flash_data_ptr, DEC);
 	}
 	void load()
 	{
 		EEPROM.get(flash_data_ptr, data);
-		Serial.print("Loading data from EEPROM at address: ");
-		Serial.println(flash_data_ptr, DEC);
+		print("Loading data from EEPROM at address: ");
+		println(flash_data_ptr, DEC);
 	}
 	~NonVolatileData() {};
 };
@@ -91,13 +91,10 @@ struct SluManagementData
 	int counter = 0;
 };
 
-// load_funcArray[_saved_data_counter++] = __load_st;
-
 /**
  * @brief This value holds the Slu management data in the EEPROM.
- * Not accessible from directly, use the slu_management_data variable.
+ *
  */
-// SluManagementData EEMEM _slu_flash_data;
 STORED_DATA(SluManagementData, slu_management_data);
 
 void SluSaveAllData()
