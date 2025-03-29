@@ -3,8 +3,11 @@
 
 #include <avr/wdt.h>  // Include Watchdog Timer library
 
-wdt_enable(WDTO_2S); // Enable the Watchdog Timer with a timeout of 2 seconds
+//TODO
 
-wdt_reset(); // Reset the watchdog timer to prevent a reset
+void functions() {
+    wdt_enable(WDTO_2S); // Enable the Watchdog Timer with a timeout of 2 seconds
+    wdt_reset(); // Reset the watchdog timer to prevent a reset
+};
 
 #endif

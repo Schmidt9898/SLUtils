@@ -14,6 +14,7 @@ class Button
 {
 	uint8_t pin;
 	bool isdown = false;
+public:
 	ButtonState GetState()
 	{
 		bool val = !digitalRead(pin);

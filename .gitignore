@@ -1,0 +1,10 @@
+_build/
+*.exe
+*.pdb
+*.conf
+*.bin
+*.hex
+*.elf
+*.map
+*.eep
+

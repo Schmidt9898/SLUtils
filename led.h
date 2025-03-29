@@ -5,7 +5,7 @@
 
 /*
 #ifndef NUMBER_OF_LEDS
-#error Please define NUMBER_OF_LEDS 
+#error Please define NUMBER_OF_LEDS
 // Example:
 // #define NUMBER_OF_LEDS 2
 #endif
