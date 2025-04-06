@@ -8,3 +8,5 @@ _build/
 *.map
 *.eep
 
+*.pdf
+commands.txtó

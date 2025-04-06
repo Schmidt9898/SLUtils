@@ -5,4 +5,5 @@
 #include "input.h"
 #include "safety.h"
 #include "storage.h"
+#include "power.h"
 

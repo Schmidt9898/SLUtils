@@ -1,33 +1,34 @@
 #ifndef SLU_INPUT
 #define SLU_INPUT
 
-
-enum ButtonState {
-  None = 0,
-  Pressed = 1,
-  Released = 3,
-  Down = 4
+enum ButtonState
+{
+	None = 0,
+	Pressed = 1,
+	Released = 3,
+	Down = 4
 };
-
 
 class Button
 {
 	uint8_t pin;
 	bool isdown = false;
+
 public:
 	ButtonState GetState()
 	{
 		bool val = !digitalRead(pin);
-		if(isdown ^ val)
+		if (isdown ^ val)
 		{
 			isdown = val;
-			delay(50); //  button transient noise canceling delay.
-			if(isdown)
+			// TODO: make it configurable
+			delay(50); //  button debounce delay.
+			if (isdown)
 				return ButtonState::Pressed;
 			else
 				return ButtonState::Released;
 		}
-		if(isdown)
+		if (isdown)
 			return ButtonState::Down;
 		return ButtonState::None;
 	};
@@ -38,15 +39,5 @@ public:
 	};
 	Button() { pin = -1; };
 };
-
-
-
-
-
-
-
-
-
-
 
 #endif

@@ -3,8 +3,8 @@
 
 #include "SLUtils.h"
 #include "assert.h"
-SLed led_green(A1);
-SLed led_red(A0);
+SluLed led_green(A1);
+SluLed led_red(A0);
 
 
 void abort()
@@ -16,7 +16,7 @@ void abort()
     }
 };
 
-SLed myled1(8);
+SluLed myled1(8);
 
 Button mybutton1(9);
 
