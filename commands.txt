@@ -1,2 +1,4 @@
 arduino-cli compile .\tests\buildtest\ -b arduino:avr:nano --build-path ./_build/ --library ./
+arduino-cli lib update-index
 
+arduino-cli lib install "Arduino Low Power"

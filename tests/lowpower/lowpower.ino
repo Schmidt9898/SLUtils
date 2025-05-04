@@ -25,47 +25,42 @@ STORED_DATA(int, wdt_value);
 #include <avr/wdt.h>
 #include <avr/interrupt.h>
 
-ISR(WDT_vect) {
-    // This function is called when the watchdog timer expires
-    wdt_reset();
-    wdt_value.data = 1;
-    wdt_value.save();
+ISR(INT0_vect) {
+    led_red.turn(true); 
 }
+
 
 void setup() {
 
     InitSerial();
     println("Start test");
-    print("wdt_value:");
-    println(wdt_value.data);
     Serial.flush();
-    wdt_value.data = 0;
-    wdt_value.save();
+
     led_red.turn(true);
+
     cli();  // Disable global interrupts
-    wdt_reset();  // Reset watchdog timer
-
-    MCUSR;
-
-// Setup Watchdog for interrupt and not reset, and a approximately 500ms timeout P.45
-//WDTCR = (1<<WDIE) | (1<<WDP2) | (1<<WDP0);
-
-    // Enable watchdog timer for ~8 seconds
-    //wdt_enable(WDTO_4S);
-
+    EICRA |= (1 << ISC01);  // Trigger interrupt on falling edge (INT0)
+    EICRA &= ~(1 << ISC00); // Falling edge
+    // Enable external interrupt 0 (INT0)
+    EIMSK |= (1 << INT0);   // Enable interrupt on INT0
     sei();  // Enable global interrupts
-
+    SluSetClockSpeed(SluClockSpeed::_500kHz);
     // Set sleep mode to power down
     set_sleep_mode(SLEEP_MODE_PWR_SAVE);
-    sleep_mode();    // Enter sleep mode
 }
 
 void loop() {
 
     // Code execution continues here after wake-up
-    led_red.turn(false);
     println("continues after wake-up");
+    //led_red.turn(true);
     Serial.flush();
+    long i =  millis();
+    volatile int val = 0;
+    while(millis() < i + 3000) {
+        val = val + 1;
+    }
+    led_red.turn(false);
+    sleep_mode();    // Enter sleep mode
 
-    delay(1000);  // Do something after waking up
 }

@@ -1,6 +1,10 @@
 #ifndef POWER_H
 #define POWER_H
 
+#include <avr/sleep.h> // Include AVR sleep library
+
+// Changing the clock prescaler significantly affect the mcu power consumption
+
 // Atmega328P Clock Prescaler
 // The clock prescaler divides the system clock frequency by a certain factor to reduce power consumption
 /*
@@ -67,6 +71,51 @@ void SluDelay(long ms){
         return;
     }
     delay(ms / _cdf); // Delay function with time scaling
+}
+
+// SLEEP_MODE_IDLE         0
+// SLEEP_MODE_PWR_DOWN     1
+// SLEEP_MODE_PWR_SAVE     2
+// SLEEP_MODE_ADC          3
+// SLEEP_MODE_STANDBY      4
+// SLEEP_MODE_EXT_STANDBY  5
+
+
+typedef void(*functionPtr)(void);
+
+
+functionPtr preEnterPowerDown = nullptr;
+functionPtr postLeavePowerDown = nullptr;
+
+void SluSetPreEnterPowerDown(functionPtr func) {
+    preEnterPowerDown = func; // Set the pre-sleep function pointer
+}
+void SluSetPostLeavePowerDown(functionPtr func) {
+    postLeavePowerDown = func; // Set the post-wake function pointer
+}
+
+
+
+/**
+ * @brief Put the microcontroller into sleep mode to save power. Only external interrupts can wake it up.
+ * Note: You can configure
+ */
+void SluPowerDown() {
+    // Set the sleep mode to power down
+    set_sleep_mode(SLEEP_MODE_PWR_DOWN); // Set sleep mode to power down
+
+    if (preEnterPowerDown != nullptr) {
+        preEnterPowerDown(); // Call the pre-sleep function if set
+    }
+
+    sleep_enable(); // Enable sleep mode
+    sleep_cpu(); // Enter sleep mode
+    sleep_disable(); // Disable sleep mode after waking up
+
+    if (postLeavePowerDown != nullptr) {
+        postLeavePowerDown(); // Call the post-wake function if set
+    }
+
 }
 
 #endif
