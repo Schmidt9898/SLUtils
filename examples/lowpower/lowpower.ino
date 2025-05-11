@@ -2,7 +2,12 @@
 
 #include "SLUtils.h"
 
-SluLed led_red(A0);
+SluLed led_red(13);
+
+ISR(WDT_vect) {
+    // We just use it to wake up from sleep
+}
+
 
 void mypowerDown() {
     // This function is called before entering power down mode
@@ -18,35 +23,27 @@ void mypowerUp() {
     println("Waking up from power down mode...");
 };
 
-void myInteruptr(){
 
-}
+void setup() {
 
-void setup()
-{
     InitSerial();
-    println("Start timer example");
-    SluSetClockSpeed(SluClockSpeed::_16MHz); // Set clock speed to 16MHz
+    println("Start lowpower test");
     Serial.flush();
 
     SluSetPreEnterPowerDown(mypowerDown); // Set the pre-sleep function
     SluSetPostLeavePowerDown(mypowerUp); // Set the post-wake function
 
-
-
-    // LOW to trigger the interrupt whenever the pin is low,
-    // CHANGE to trigger the interrupt whenever the pin changes value
-    // RISING to trigger when the pin goes from low to high,
-    // FALLING for when the pin goes from high to low.
-    attachInterrupt(digitalPinToInterrupt(2), myInteruptr, CHANGE);
-
-
-
+    EnableInterruptWdt(WDT_P_1000MS); // Enable the Watchdog Timer with a 1 second timeout period
+    //EnableResetWdt(WDT_P_1000MS);
 }
 
 void loop() {
-    led_red.toggle();
-    SluDelay(100);
-    SluPowerDown();
+    SluPowerDown(); // Enter sleep mode
+    ResetWdt(); // Reset the watchdog timer to prevent a reset
+    // Code execution continues here after wake-up
+    println("Woked up from sleep");
+    Serial.flush();
+    led_red.turn(true);
+    delay(500);
+    led_red.turn(false);
 }
-
